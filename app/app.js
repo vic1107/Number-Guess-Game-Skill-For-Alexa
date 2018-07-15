@@ -1,6 +1,6 @@
 'use strict';
 
-/* This Alexa skill is implements simple guess number game. */
+/* This Alexa skill implements simple guess number game. */
 
 // =================================================================================
 // App Configuration
@@ -59,10 +59,10 @@ app.setHandler({
 
     /* saves users name and ask for new game */
     'MyNameIsIntent': function(name) {
-        if (debug) {console.log('MyNameIsIntent called. User name is ' + name.value)}
+        if (debug) {console.log(`MyNameIsIntent called. User name is ${name.value}`)}
         this.setSessionAttribute('name', name.value);
         this.followUpState('StartNewGameIntent')
-            .ask('Hey ' + name.value + '. ' + NEW_GAME_REQUEST_TEXT,
+            .ask(`Hey ${name.value}. ${NEW_GAME_REQUEST_TEXT}`,
                 'Do you want to play?');
     },
 
@@ -73,9 +73,9 @@ app.setHandler({
             if (debug) {console.log('StartNewGameIntent was called. Answer is yes')}
             this.setSessionAttribute('randomNumber', Math.round(Math.random() * HIGH_LIMIT));
             this.setSessionAttribute('numberOfGuesses', 1);
-            if (debug) {console.log("Random choice is " + this.getSessionAttribute('randomNumber'))}
+            if (debug) {console.log(`Random choice is ${this.getSessionAttribute('randomNumber')}`)}
 
-            const speech = 'Guess number between zero and ' + HIGH_LIMIT;
+            const speech = `Guess number between zero and ${HIGH_LIMIT}`;
             this.followUpState('GuessGameIntent').ask(speech, 'Guess number, please!');
         },
 
@@ -91,7 +91,7 @@ app.setHandler({
     'GuessGameIntent': {
         'NumberGuessIntent': function (number) {
             const numberGuess = Number(number.value);
-            if (debug) {console.log('NumberGuessIntent was called. Guessed number is ' + numberGuess)}
+            if (debug) {console.log(`NumberGuessIntent was called. Guessed number is ${numberGuess}`)}
 
             // negative number handling
             if (numberGuess < 0) {
@@ -108,22 +108,22 @@ app.setHandler({
             // too low number handling
             else if (numberGuess < this.getSessionAttribute('randomNumber')) { // to low handler
                 this.setSessionAttribute('numberOfGuesses', this.getSessionAttribute('numberOfGuesses') + 1);
-                const speech2 = 'Too low. ' + generateMessage(this.getSessionAttribute('numberOfGuesses'));
+                const speech2 = `Too low. ${generateMessage(this.getSessionAttribute('numberOfGuesses'))}`;
                 this.followUpState('GuessGameIntent')
                     .ask(speech2, GIVE_NUMBER_MESS);
             }
             // too high number handling
             else if (numberGuess > this.getSessionAttribute('randomNumber')) {
                 this.setSessionAttribute('numberOfGuesses', this.getSessionAttribute('numberOfGuesses') + 1);
-                const speech3 = 'Too high. ' + generateMessage(this.getSessionAttribute('numberOfGuesses'));
+                const speech3 = `Too high. ${generateMessage(this.getSessionAttribute('numberOfGuesses'))}`;
                 this.followUpState('GuessGameIntent')
                     .ask(speech3, GIVE_NUMBER_MESS);
             }
             else { // user found number handling
                 this.followUpState('StartNewGameIntent')
-                    .ask('Hurray ' + this.getSessionAttribute('name') + ', you find the number just in '
-                        + this.getSessionAttribute('numberOfGuesses')
-                        + ' steps. Congratulation! ' + NEW_GAME_REQUEST_TEXT,
+                    .ask(`Hurray ${this.getSessionAttribute('name')}, you find the number just in 
+                    ${this.getSessionAttribute('numberOfGuesses')} steps. 
+                    Congratulation! ${NEW_GAME_REQUEST_TEXT}`,
                         'You win! Do you want to play a new game?');
             }
         },
